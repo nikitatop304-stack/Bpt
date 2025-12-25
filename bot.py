@@ -68,44 +68,44 @@ try:
     bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN, threaded=True, num_threads=10)
     print("✅ Бот инициализирован!")
 except Exception as e:
-    print(f"❌ Ошибка: {e}")
-    sys.exit(1)
+    print ( f"❌ Ошибка: { e } " )
+    sys. exit ( 1 )
 
 # ========== ЛОГИРОВАНИЕ ==========
-def log_debug(message):
-    timestamp = datetime.now().strftime('%H:%M:%S')
-    print(f"[DEBUG {timestamp}] {message}")
-    sys.stdout.flush()
+def  log_debug ( message ) :
+    метка времени = дататайм.сейчас ( ) . strftime ( '%H:%M:%S ' )
+    print ( f"[DEBUG { timestamp } ] { message } " )
+    sys.stdout.flush ( )​​​
 
-def log_error(message):
-    timestamp = datetime.now().strftime('%H:%M:%S')
-    print(f"❌ [ERROR {timestamp}] {message}")
-    sys.stdout.flush()
+def  log_error ( message ) :
+    метка времени = дататайм.сейчас ( ) . strftime ( '%H:%M:%S ' )
+    print ( f"❌ [ERROR { timestamp } ] { message } " )
+    sys.stdout.flush ( )​​​
 
 # ========== БАЗА ДАННЫХ ==========
-class Database:
-    def __init__(self, db_name='monofreez.db'):
+класс База данных:
+    def  __init__ ( self, db_name= 'monofreez.db' ) :
         self.db_name = db_name
-        self.init_db()
+        self.init_db ( )​
     
-    def get_connection(self):
-        return sqlite3.connect(self.db_name, check_same_thread=False)
+    def  get_connection ( self ) :
+        return sqlite3.connect ( self.db_name , check_same_thread = False )
     
-    def init_db(self):
-        conn = self.get_connection()
-        cursor = conn.cursor()
+    def  init_db ( self ) :
+        conn = self.get_connection ( )
+курсор =         conn.cursor ( )
         
         # Таблица пользователей
-        cursor.execute('''
+        курсор.выполнить ( ' ''
             CREATE TABLE IF NOT EXISTS users (
-                user_id INTEGER PRIMARY KEY,
-                username TEXT,
+                user_id — целочисленный первичный ключ.
+                имя пользователя ТЕКСТ,
                 first_name TEXT,
                 last_name TEXT,
                 registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        ''')
+        ''' )
         
         # Таблица подписок
         cursor.execute('''
