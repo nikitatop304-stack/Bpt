@@ -1,108 +1,41 @@
-import os
-from dotenv import load_dotenv
+# config.py - ТОЛЬКО ЭТИ ДАННЫЕ
 
-# Загружаем переменные из .env файла
-load_dotenv()
+# Токен бота (получить в @BotFather)
+TELEGRAM_BOT_TOKEN = "7831575649:AAFgFYsY7afjBL9PX1JKma9zK0GrpULcBaY"
 
-# ========== ПОЛУЧЕНИЕ ТОКЕНОВ ИЗ ПЕРЕМЕННЫХ ОКРУЖЕНИЯ ==========
-
-# Токен бота Telegram
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-if not TELEGRAM_BOT_TOKEN:
-    print("⚠️ ВНИМАНИЕ: TELEGRAM_BOT_TOKEN не установлен в .env файле!")
-    print("❌ Бот не будет работать без токена")
-    exit(1)
-
-# API ID и Hash для Telethon
-API_ID = os.getenv('API_ID')
-API_HASH = os.getenv('API_HASH')
-
-if not API_ID or not API_HASH:
-    print("⚠️ ВНИМАНИЕ: API_ID или API_HASH не установлены в .env файле!")
-    print("⚠️ Функции Telethon могут не работать")
+# Telegram API (https://my.telegram.org)
+API_ID = 34000428
+API_HASH = "68c4db995c26cda0187e723168cc6285"
 
 # Строка сессии Telethon
-SESSION_STRING = os.getenv('SESSION_STRING')
+SESSION_STRING = "1AgAOMTQ5LjE1NC4xNjcuNDEBu42Ajzk8wH+OKtuvQYjMT+jpw9cHg2CFHGYju7u8V8j52qp2Kg2dasqC5KrFnTfTg3r1N568pfHLeCCVt20lTnHRGZmSu29n19EreqbtAFDZh49fE6B7KIOHHxwOdBRl0jukNHRXlAdPyNPKvE0SRSuMg5VzVVLY4lCjWzrIeRjFO5I5B/kMQnDJBR7k5L4P5zgruE3qbntgaiMDaJmn2c9RbH7a0N+STBCOn5KhEZX7xq72XydZgOia/uI5q3OFN1huvDwcQMMyAkVLkcmvP/BvGU+SRrM9AVxUYZE+37DWwYJutVCbxgtEjAjhEVgYzJ+HENnyRWHr1vgyCRmQqSY="
 
-# Токен Crypto Pay
-CRYPTOPAY_TOKEN = os.getenv('CRYPTOPAY_TOKEN')
-CRYPTOPAY_API_URL = os.getenv('CRYPTOPAY_API_URL', 'https://pay.crypt.bot/api/')
+# Crypto Pay
+CRYPTOPAY_TOKEN = "482874:AAuE5RiV2VKd55z0uQzPy18MMKsRvfu8DI2"
+CRYPTOPAY_API_URL = "https://pay.crypt.bot/api/"
 
-# Админы бота
-ADMINS_STR = os.getenv('ADMINS', '')
-if ADMINS_STR:
-    ADMINS = list(map(int, ADMINS_STR.split(',')))
-else:
-    ADMINS = []
-    print("⚠️ ВНИМАНИЕ: ADMINS не установлены в .env файле!")
+# Админы (ID через запятую)
+ADMINS = [5522585352]
 
-# ========== ПРОВЕРКА КОНФИГУРАЦИИ ==========
-
-def validate_config():
-    """Проверяет обязательные настройки"""
-    errors = []
-    
-    if not TELEGRAM_BOT_TOKEN:
-        errors.append("TELEGRAM_BOT_TOKEN не установлен")
-    
-    if not API_ID:
-        errors.append("API_ID не установлен")
-    elif not API_ID.isdigit():
-        errors.append("API_ID должен быть числом")
-    else:
-        API_ID = int(API_ID)
-    
-    if not API_HASH:
-        errors.append("API_HASH не установлен")
-    
-    if not SESSION_STRING:
-        print("⚠️ Предупреждение: SESSION_STRING не установлен")
-        print("   Telethon сессии будут храниться в файле")
-    
-    if errors:
-        print("\n❌ Ошибки конфигурации:")
-        for error in errors:
-            print(f"   - {error}")
-        print("\n📁 Проверьте .env файл")
-        return False
-    
-    return True
-
-# ========== ВЫВОД ИНФОРМАЦИИ (БЕЗ ПОЛНЫХ КЛЮЧЕЙ) ==========
-
-print("✅ Конфигурация загружена из .env файла")
-print(f"🤖 Бот: {TELEGRAM_BOT_TOKEN[:15]}...")
-print(f"🔑 API ID: {API_ID[:5]}...") if API_ID else print("🔑 API ID: Не установлен")
-print(f"👥 Админы: {len(ADMINS)} пользователей")
-if CRYPTOPAY_TOKEN:
-    print(f"💰 Crypto Pay: настроен")
-else:
-    print("⚠️ Crypto Pay: токен не установлен")
-
-# Проверяем конфигурацию
-if not validate_config():
-    exit(1)
-
-# ========== ОСТАЛЬНОЙ КОД (каналы, группы, логи) ==========
-
-# Каналы для подписки (остаются как были)
+# Каналы для подписки
 CHANNELS = [
     {'id': -1002938353350, 'name': 'WakeFreez', 'url': 'https://t.me/WakeDeff'},
     {'id': -1002504179787, 'name': 'Логи', 'url': 'https://t.me/WakeNft'}
 ]
 
-# Группы для бана (остаются как были)
+# Группы для бана
 GROUPS = [
-    -1003638659955,
-    -1003524689431,
-    # ... остальные группы
+    -1003638659955, -1003524689431, -1003532499825, -1003550169206,
+    -1003553874960, -1003560527969, -1003569121206, -1003611895403,
+    -1003636555785, -1003663318633, -1003586917703, -1003668973847,
+    -1003550241722, -1003610626300, -1003652277998, -1003576429923,
+    -1003680248803, -1003697025287, -1003510489331, -1003689576802,
+    -1003687671247, -1003355183473, -1003651010227, -1003586116805,
+    -1003524689431, -1003532499825, -1003550169206, -1003660768783,
+    -1003550990838, -1003608338829, -1003536552505, -1003527919582,
+    -1003273890583
 ]
 
 # Логи
 LOG_CHANNEL_ID = -1002504179787
 LOGS_LINK = 'https://t.me/WakeNft'
-
-print(f"\n📊 Настроено:")
-print(f"   📢 Каналов для подписки: {len(CHANNELS)}")
-print(f"   🚫 Групп для бана: {len(GROUPS)}")
-print(f"   📝 Логирование в: {LOG_CHANNEL_ID}")
