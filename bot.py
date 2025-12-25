@@ -18,61 +18,120 @@ import random
 import sys
 import os
 
-# ========== КОНФИГУРАЦИЯ ==========
-# ВАЖНО: создай файл .env в той же папке с этими данными!
+# ========== ЖЕСТКАЯ ЗАГРУЗКА КОНФИГА ==========
+print("=" * 50)
+print("🤖 БОТ MONOFREEZ - СИЛОВАЯ ЗАГРУЗКА")
+print("=" * 50)
 
-# Импортируем переменные окружения
-from dotenv import load_dotenv
-load_dotenv()
+# 1. Сначала пробуем из config.py
+try:
+    import config
+    print("📁 Загружаю из config.py...")
+    
+    # Берем токен ЛЮБЫМ способом
+    TELEGRAM_BOT_TOKEN = None
+    
+    # Способ 1: из config.py
+    if hasattr(config, 'TELEGRAM_BOT_TOKEN'):
+        TELEGRAM_BOT_TOKEN = config.TELEGRAM_BOT_TOKEN
+        print(f"✅ Токен из config.py: {TELEGRAM_BOT_TOKEN[:15]}...")
+    
+    # Способ 2: из переменных окружения
+    if not TELEGRAM_BOT_TOKEN:
+        TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+        if TELEGRAM_BOT_TOKEN:
+            print(f"✅ Токен из .env: {TELEGRAM_BOT_TOKEN[:15]}...")
+    
+    # Способ 3: хардкод (экстренный)
+    if not TELEGRAM_BOT_TOKEN:
+        print("⚠️ Токен не найден, использую аварийный...")
+        TELEGRAM_BOT_TOKEN = "7831575649:AAFgFYsY7afjBL9PX1JKma9zK0GrpULcBaY"  # ЗАМЕНИ ЭТО!
+    
+    # ВАЛИДАЦИЯ ТОКЕНА
+    print(f"🔍 Проверяю токен...")
+    print(f"   Длина: {len(TELEGRAM_BOT_TOKEN)} символов")
+    print(f"   Содержит ':' ? {':' in TELEGRAM_BOT_TOKEN}")
+    
+    if not TELEGRAM_BOT_TOKEN or ':' not in TELEGRAM_BOT_TOKEN:
+        print(f"❌ КРИТИЧЕСКАЯ ОШИБКА: Невалидный токен!")
+        print(f"   Токен: '{TELEGRAM_BOT_TOKEN}'")
+        print("   Получи новый: @BotFather → /mybots → API Token")
+        sys.exit(1)
+    
+    # Разделяем токен для проверки
+    parts = TELEGRAM_BOT_TOKEN.split(':')
+    if len(parts) != 2:
+        print(f"❌ Токен должен быть в формате 'число:строка'")
+        sys.exit(1)
+    
+    bot_id = parts[0]
+    bot_secret = parts[1]
+    
+    print(f"✅ Токен валидный!")
+    print(f"   ID бота: {bot_id}")
+    print(f"   Секрет: {bot_secret[:5]}...")
+    
+    # Остальные настройки
+    API_ID = getattr(config, 'API_ID', os.getenv('API_ID', '34000428'))
+    API_HASH = getattr(config, 'API_HASH', os.getenv('API_HASH', '68c4db995c26cda0187e723168cc6285'))
+    SESSION_STRING = getattr(config, 'SESSION_STRING', os.getenv('SESSION_STRING', ''))
+    
+    # Конвертируем API_ID в число
+    try:
+        API_ID = int(API_ID)
+    except:
+        print(f"❌ API_ID должно быть числом, получено: {API_ID}")
+        API_ID = 34000428
+    
+    # Группы и каналы
+    GROUPS = getattr(config, 'GROUPS', [
+        -1003638659955, -1003524689431, -1003532499825, -1003550169206,
+        -1003553874960, -1003560527969, -1003569121206, -1003611895403,
+        -1003636555785, -1003663318633, -1003586917703, -1003668973847,
+        -1003550241722, -1003610626300, -1003652277998, -1003576429923,
+        -1003680248803, -1003697025287, -1003510489331, -1003689576802,
+        -1003687671247, -1003355183473, -1003651010227, -1003586116805,
+        -1003524689431, -1003532499825, -1003550169206, -1003660768783,
+        -1003550990838, -1003608338829, -1003536552505, -1003527919582,
+        -1003273890583
+    ])
+    
+    CHANNELS = getattr(config, 'CHANNELS', [
+        {'id': -1002938353350, 'name': 'WakeFreez', 'url': 'https://t.me/WakeDeff'},
+        {'id': -1002504179787, 'name': 'Логи', 'url': 'https://t.me/WakeNft'}
+    ])
+    
+    # Платежи
+    CRYPTOPAY_TOKEN = getattr(config, 'CRYPTOPAY_TOKEN', os.getenv('CRYPTOPAY_TOKEN', '482874:AAuE5RiV2VKd55z0uQzPy18MMKsRvfu8DI2'))
+    CRYPTOPAY_API_URL = getattr(config, 'CRYPTOPAY_API_URL', 'https://pay.crypt.bot/api/')
+    
+    # Админы
+    ADMINS_STR = getattr(config, 'ADMINS', os.getenv('ADMINS', '5522585352'))
+    if isinstance(ADMINS_STR, str):
+        ADMINS = [int(x.strip()) for x in ADMINS_STR.split(',') if x.strip().isdigit()]
+    elif isinstance(ADMINS_STR, list):
+        ADMINS = ADMINS_STR
+    else:
+        ADMINS = [5522585352]
+    
+    # Логи
+    LOG_CHANNEL_ID = getattr(config, 'LOG_CHANNEL_ID', -1002504179787)
+    LOGS_LINK = getattr(config, 'LOGS_LINK', 'https://t.me/WakeNft')
+    
+    print("=" * 50)
+    print("✅ КОНФИГ ЗАГРУЖЕН!")
+    print(f"🤖 Бот ID: {bot_id}")
+    print(f"👑 Админы: {ADMINS}")
+    print(f"📢 Каналов: {len(CHANNELS)}")
+    print(f"📊 Групп: {len(GROUPS)}")
+    print("=" * 50)
+    
+except Exception as e:
+    print(f"❌ Ошибка загрузки конфига: {e}")
+    traceback.print_exc()
+    sys.exit(1)
 
-# Telegram Bot Token (получить у @BotFather)
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '7831575649:AAFgFYsY7afjBL9PX1JKma9zK0GrpULcBaY')
-
-# Telegram API (получить на my.telegram.org)
-API_ID = int(os.getenv('API_ID', '34000428'))
-API_HASH = os.getenv('API_HASH', '68c4db995c26cda0187e723168cc6285')
-
-# Telethon Session (строка сессии)
-SESSION_STRING = os.getenv('SESSION_STRING', '1AgAOMTQ5LjE1NC4xNjcuNDEBu42Ajzk8wH+OKtuvQYjMT+jpw9cHg2CFHGYju7u8V8j52qp2Kg2dasqC5KrFnTfTg3r1N568pfHLeCCVt20lTnHRGZmSu29n19EreqbtAFDZh49fE6B7KIOHHxwOdBRl0jukNHRXlAdPyNPKvE0SRSuMg5VzVVLY4lCjWzrIeRjFO5I5B/kMQnDJBR7k5L4P5zgruE3qbntgaiMDaJmn2c9RbH7a0N+STBCOn5KhEZX7xq72XydZgOia/uI5q3OFN1huvDwcQMMyAkVLkcmvP/BvGU+SRrM9AVxUYZE+37DWwYJutVCbxgtEjAjhEVgYzJ+HENnyRWHr1vgyCRmQqSY=')
-
-# Crypto Pay Token (получить у @CryptoBot)
-CRYPTOPAY_TOKEN = os.getenv('CRYPTOPAY_TOKEN', '482874:AAuE5RiV2VKd55z0uQzPy18MMKsRvfu8DI2')
-CRYPTOPAY_API_URL = os.getenv('CRYPTOPAY_API_URL', 'https://pay.crypt.bot/api/')
-
-# Админы бота (ID через запятую)
-ADMINS_STR = os.getenv('ADMINS', '5522585352')
-ADMINS = []
-if ADMINS_STR:
-    for admin_id in ADMINS_STR.split(','):
-        try:
-            ADMINS.append(int(admin_id.strip()))
-        except:
-            pass
-
-# Каналы для подписки
-CHANNELS = [
-    {'id': -1002938353350, 'name': 'WakeFreez', 'url': 'https://t.me/WakeDeff'},
-    {'id': -1002504179787, 'name': 'Логи', 'url': 'https://t.me/WakeNft'}
-]
-
-# Группы для бана
-GROUPS = [
-    -1003638659955, -1003524689431, -1003532499825, -1003550169206,
-    -1003553874960, -1003560527969, -1003569121206, -1003611895403,
-    -1003636555785, -1003663318633, -1003586917703, -1003668973847,
-    -1003550241722, -1003610626300, -1003652277998, -1003576429923,
-    -1003680248803, -1003697025287, -1003510489331, -1003689576802,
-    -1003687671247, -1003355183473, -1003651010227, -1003586116805,
-    -1003524689431, -1003532499825, -1003550169206, -1003660768783,
-    -1003550990838, -1003608338829, -1003536552505, -1003527919582,
-    -1003273890583
-]
-
-# Логи
-LOG_CHANNEL_ID = -1002504179787
-LOGS_LINK = 'https://t.me/WakeNft'
-
-# Тарифы подписок
+# ========== КОНСТАНТЫ ==========
 SUBSCRIPTION_PLANS = {
     '1_day': {'days': 1, 'price': 2.0, 'label': '1 день - 2$'},
     '7_days': {'days': 7, 'price': 4.5, 'label': '7 дней - 4.5$'},
@@ -80,27 +139,50 @@ SUBSCRIPTION_PLANS = {
     '90_days': {'days': 90, 'price': 13.0, 'label': '90 дней - 13$'}
 }
 
-# Настройки
 TELEGRAM_API_DELAY = 0.5
 MAX_RETRIES = 3
-REQUEST_COOLDOWN = 300  # 5 минут
+REQUEST_COOLDOWN = 300
 
-# ========== ИНИЦИАЛИЗАЦИЯ ==========
-print("=" * 50)
-print("🤖 Запуск бота MonoFreez...")
-print(f"🔑 Токен: {TELEGRAM_BOT_TOKEN[:15]}...")
-print(f"👑 Админы: {ADMINS}")
-print(f"📢 Каналов: {len(CHANNELS)}")
-print(f"📊 Групп: {len(GROUPS)}")
-print("=" * 50)
-
-bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN, threaded=True, num_threads=10)
+# ========== ИНИЦИАЛИЗАЦИЯ БОТА ==========
+print("🚀 Инициализирую бота...")
+try:
+    bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN, threaded=True, num_threads=10)
+    print("✅ Бот инициализирован успешно!")
+    
+    # Тестовая команда для проверки
+    @bot.message_handler(commands=['test'])
+    def test_command(message):
+        bot.reply_to(message, "✅ Бот работает! Токен валидный.")
+    
+except Exception as e:
+    print(f"❌ Ошибка инициализации бота: {e}")
+    print(f"   Токен: {TELEGRAM_BOT_TOKEN[:20]}...")
+    sys.exit(1)
 
 # ========== ЛОГИРОВАНИЕ ==========
-def debug_log(message):
-    timestamp = datetime.now().strftime('%H:%M:%S')
-    print(f"[DEBUG {timestamp}] {message}")
-    sys.stdout.flush()
+class Logger:
+    @staticmethod
+    def debug(message):
+        timestamp = datetime.now().strftime('%H:%M:%S')
+        print(f"[DEBUG {timestamp}] {message}")
+        sys.stdout.flush()
+    
+    @staticmethod
+    def error(message, exc_info=False):
+        timestamp = datetime.now().strftime('%H:%M:%S')
+        print(f"[ERROR {timestamp}] {message}")
+        if exc_info:
+            traceback.print_exc()
+        sys.stdout.flush()
+    
+    @staticmethod
+    def info(message):
+        timestamp = datetime.now().strftime('%H:%M:%S')
+        print(f"[INFO {timestamp}] {message}")
+        sys.stdout.flush()
+
+# ... остальной код остается как в предыдущей версии ...
+# (все что после инициализации бота до конца файла)
 
 # ========== БАЗА ДАННЫХ ==========
 class Database:
