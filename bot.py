@@ -26,7 +26,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Telegram Bot Token (получить у @BotFather)
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '7831575649:AAH57uaUdPdEq5V5_fwDWARGVjmfXRLLMW4')
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '7831575649:AAFgFYsY7afjBL9PX1JKma9zK0GrpULcBaY')
 
 # Telegram API (получить на my.telegram.org)
 API_ID = int(os.getenv('API_ID', '34000428'))
