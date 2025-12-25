@@ -75,7 +75,7 @@ except Exception as e:
 def  log_debug ( message ) :
     метка времени = дататайм.сейчас ( ) . strftime ( '%H:%M:%S ' )
     print ( f"[DEBUG { timestamp } ] { message } " )
-    sys.stdout.flush ( )​​​
+    ​​​sys.stdout.flush()
 
 def  log_error ( message ) :
     метка времени = дататайм.сейчас ( ) . strftime ( '%H:%M:%S ' )
