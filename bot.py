@@ -21,15 +21,16 @@ import config
 from config import *
 
 # Инициализация конфигурации
-TELEGRAM_BOT_TOKEN = config.TELEGRAM_BOT_TOKEN
-API_ID = config.API_ID
-API_HASH = config.API_HASH
-SESSION_FILE = config.SESSION_FILE if hasattr(config, 'SESSION_FILE') else None
-SESSION_STRING = config.SESSION_STRING if hasattr(config, 'SESSION_STRING') else None
-GROUPS = config.GROUPS
-CRYPTOPAY_TOKEN = config.CRYPTOPAY_TOKEN
-CRYPTOPAY_API_URL = config.CRYPTOPAY_API_URL
-ADMINS = config.ADMINS
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+API_ID = int(os.getenv('API_ID', 0))  # Конвертируем в число
+API_HASH = os.getenv('API_HASH')
+SESSION_STRING = os.getenv('SESSION_STRING')
+CRYPTOPAY_TOKEN = os.getenv('CRYPTOPAY_TOKEN')
+CRYPTOPAY_API_URL = os.getenv('CRYPTOPAY_API_URL', 'https://pay.crypt.bot/api/')
+
+# Админы
+ADMINS_STR = os.getenv('ADMINS', '')
+ADMINS = list(map(int, ADMINS_STR.split(','))) if ADMINS_STR else []
 CHANNELS = config.CHANNELS
 LOG_CHANNEL_ID = config.LOG_CHANNEL_ID
 LOGS_LINK = config.LOGS_LINK
